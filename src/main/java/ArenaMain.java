@@ -43,7 +43,7 @@ public class ArenaMain {
 
                 driver.navigate().refresh();
 
-                sleepRandom(8000, 12000);
+                sleepRandom(10000, 14000);
 
                 while (true) {
 
@@ -138,15 +138,32 @@ public class ArenaMain {
 
     private static boolean attackCards(WebDriver driver) {
 
-        List<WebElement> cards = driver.findElements(
-                By.xpath("//a[@class='card']")
-        );
-
         boolean attacked = false;
 
-        for (WebElement card : cards) {
+        attacked |= clickAttack(driver, "attack0");
 
-            try {
+        sleepRandom(1000, 2000);
+
+        attacked |= clickAttack(driver, "attack1");
+
+        sleepRandom(1000, 2000);
+
+        attacked |= clickAttack(driver, "attack2");
+
+        return attacked;
+    }
+
+    // ---------------- CLICK SINGLE ATTACK ----------------
+
+    private static boolean clickAttack(WebDriver driver, String attackType) {
+
+        try {
+
+            List<WebElement> cards = driver.findElements(
+                    By.xpath("//a[@class='card']")
+            );
+
+            for (WebElement card : cards) {
 
                 String href = card.getAttribute("href");
 
@@ -154,26 +171,22 @@ public class ArenaMain {
                     continue;
                 }
 
-                if (
-                        href.contains("attack0") ||
-                        href.contains("attack1") ||
-                        href.contains("attack2")
-                ) {
+                if (href.contains(attackType)) {
 
                     click(driver, card);
 
-                    attacked = true;
+                    System.out.println("Clicked " + attackType);
 
-                    System.out.println("Clicked attack: " + href);
+                    sleepRandom(1500, 2500);
 
-                    sleepRandom(700, 1500);
+                    return true;
                 }
-
-            } catch (Exception ignored) {
             }
+
+        } catch (Exception ignored) {
         }
 
-        return attacked;
+        return false;
     }
 
     // ---------------- CLICK ----------------
