@@ -1,4 +1,4 @@
-import org.openqa.selenium.*;
+\import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -33,38 +33,64 @@ public class ArenaMain {
 
             login(driver, user, pass);
 
-            for (int arenaCount = 1; arenaCount <= 15; arenaCount++) {
+            driver.get("https://elem.cards/survival/");
 
-                System.out.println("Starting Arena #" + arenaCount);
+            sleepRandom(2000, 4000);
 
-                enterArena(driver);
+            // enter first arena
+            clickEnter(driver);
 
-                sleepRandom(25000, 30000);
+            System.out.println("Entered Arena ✔");
 
-                driver.navigate().refresh();
+            // waiting room
+            sleepRandom(25000, 30000);
 
-                sleepRandom(10000, 14000);
+            driver.navigate().refresh();
 
-                while (true) {
+            // wait cards load
+            sleepRandom(9000, 12000);
 
-                    boolean attacked = attackCards(driver);
+            while (true) {
 
-                    if (!attacked) {
+                boolean attacked = attackCards(driver);
 
-                        System.out.println("No attacks left.");
+                // attacks worked
+                if (attacked) {
 
-                        break;
-                    }
-
-                    sleepRandom(8000, 12000);
+                    sleepRandom(9000, 12000);
 
                     driver.navigate().refresh();
 
-                    sleepRandom(5000, 8000);
-                }
-            }
+                    sleepRandom(8000, 11000);
 
-            System.out.println("All arena runs completed ✔");
+                    continue;
+                }
+
+                // check enter again
+                boolean enteredAgain = clickEnterAgain(driver);
+
+                if (enteredAgain) {
+
+                    System.out.println("Started next arena ✔");
+
+                    sleepRandom(25000, 30000);
+
+                    driver.navigate().refresh();
+
+                    sleepRandom(9000, 12000);
+
+                    continue;
+                }
+
+                // probably dead waiting for battle end
+                System.out.println("Waiting for battle to finish...");
+
+                sleepRandom(9000, 12000);
+
+                driver.navigate().refresh();
+
+                sleepRandom(5000, 8000);
+            }
 
         } catch (Exception e) {
 
@@ -99,39 +125,54 @@ public class ArenaMain {
         sleep(3000);
     }
 
-    // ---------------- ENTER ARENA ----------------
+    // ---------------- CLICK ENTER ----------------
 
-    private static void enterArena(WebDriver driver) {
+    private static boolean clickEnter(WebDriver driver) {
 
-        driver.get("https://elem.cards/");
+        try {
 
-        sleepRandom(2000, 4000);
+            List<WebElement> enterBtn = driver.findElements(
+                    By.xpath("//span[text()='Enter']/ancestor::a")
+            );
 
-        List<WebElement> arenaBtn = driver.findElements(
-                By.cssSelector("a.bttn.arena")
-        );
+            if (!enterBtn.isEmpty()) {
 
-        if (!arenaBtn.isEmpty()) {
+                click(driver, enterBtn.get(0));
 
-            click(driver, arenaBtn.get(0));
+                return true;
+            }
+
+        } catch (Exception ignored) {
         }
 
-        sleepRandom(3000, 5000);
+        return false;
+    }
 
-        List<WebElement> enterBtn = driver.findElements(
-                By.xpath("//span[text()='Enter']/ancestor::a")
-        );
+    // ---------------- CLICK ENTER AGAIN ----------------
 
-        if (!enterBtn.isEmpty()) {
+    private static boolean clickEnterAgain(WebDriver driver) {
 
-            click(driver, enterBtn.get(0));
+        try {
 
-            System.out.println("Entered Arena ✔");
+            List<WebElement> btns = driver.findElements(
+                    By.xpath("//span[contains(text(),'Enter again')]/ancestor::a")
+            );
 
-        } else {
+            if (!btns.isEmpty()) {
 
-            System.out.println("No Enter button found.");
+                click(driver, btns.get(0));
+
+                System.out.println("Clicked Enter again");
+
+                sleepRandom(3000, 5000);
+
+                return true;
+            }
+
+        } catch (Exception ignored) {
         }
+
+        return false;
     }
 
     // ---------------- ATTACK CARDS ----------------
@@ -142,11 +183,11 @@ public class ArenaMain {
 
         attacked |= clickAttack(driver, "attack0");
 
-        sleepRandom(1000, 2000);
+        sleepRandom(300, 700);
 
         attacked |= clickAttack(driver, "attack1");
 
-        sleepRandom(1000, 2000);
+        sleepRandom(300, 700);
 
         attacked |= clickAttack(driver, "attack2");
 
@@ -177,7 +218,7 @@ public class ArenaMain {
 
                     System.out.println("Clicked " + attackType);
 
-                    sleepRandom(1500, 2500);
+                    sleepRandom(700, 1200);
 
                     return true;
                 }
