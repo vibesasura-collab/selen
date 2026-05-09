@@ -23,6 +23,45 @@ jobs:
             game_id_secret: GAME_ID_1
             game_password_secret: GAME_PASSWORD_1
 
+          - id: 2
+            game_id_secret: GAME_ID_2
+            game_password_secret: GAME_PASSWORD_2
+
+          - id: 3
+            game_id_secret: GAME_ID_3
+            game_password_secret: GAME_PASSWORD_3
+
+          - id: 4
+            game_id_secret: GAME_ID_4
+            game_password_secret: GAME_PASSWORD_4
+
+          - id: 5
+            game_id_secret: GAME_ID_5
+            game_password_secret: GAME_PASSWORD_5
+
+          - id: 6
+            game_id_secret: GAME_ID_6
+            game_password_secret: GAME_PASSWORD_6
+
+          - id: 11
+            game_id_secret: GAME_ID_11
+            game_password_secret: GAME_PASSWORD_11
+
+          - id: 28
+            game_id_secret: GAME_ID_28
+            game_password_secret: GAME_PASSWORD_28
+
+          - id: 29
+            game_id_secret: GAME_ID_29
+            game_password_secret: GAME_PASSWORD_29
+
+          - id: 30
+            game_id_secret: GAME_ID_30
+            game_password_secret: GAME_PASSWORD_30
+
+          - id: 34
+            game_id_secret: GAME_ID_34
+            game_password_secret: GAME_PASSWORD_34
 
     steps:
       - name: Checkout
@@ -47,6 +86,6 @@ jobs:
 
       - name: Run Arena Bot
         env:
-          GAME_ID: ${{ secrets[ matrix.game_id_secret ] }}
-          GAME_PASSWORD: ${{ secrets[ matrix.game_password_secret ] }}
+          GAME_ID: ${{ secrets[matrix.game_id_secret] }}
+          GAME_PASSWORD: ${{ secrets[matrix.game_password_secret] }}
         run: mvn -B exec:java -Dexec.mainClass=ArenaMain
