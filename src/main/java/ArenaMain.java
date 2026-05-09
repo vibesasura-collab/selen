@@ -37,20 +37,24 @@ public class ArenaMain {
 
             sleepRandom(2000, 4000);
 
+            // enter first arena
             clickEnter(driver);
 
             System.out.println("Entered Arena ✔");
 
+            // waiting room
             sleepRandom(25000, 30000);
 
             driver.navigate().refresh();
 
+            // wait cards load
             sleepRandom(9000, 12000);
 
             while (true) {
 
                 boolean attacked = attackCards(driver);
 
+                // attacks worked
                 if (attacked) {
 
                     sleepRandom(9000, 12000);
@@ -62,6 +66,7 @@ public class ArenaMain {
                     continue;
                 }
 
+                // check enter again
                 boolean enteredAgain = clickEnterAgain(driver);
 
                 if (enteredAgain) {
@@ -77,6 +82,7 @@ public class ArenaMain {
                     continue;
                 }
 
+                // probably dead waiting for battle end
                 System.out.println("Waiting for battle to finish...");
 
                 sleepRandom(9000, 12000);
@@ -95,6 +101,8 @@ public class ArenaMain {
             driver.quit();
         }
     }
+
+    // ---------------- LOGIN ----------------
 
     private static void login(WebDriver driver, String user, String pass) {
 
@@ -117,6 +125,8 @@ public class ArenaMain {
         sleep(3000);
     }
 
+    // ---------------- CLICK ENTER ----------------
+
     private static boolean clickEnter(WebDriver driver) {
 
         try {
@@ -137,6 +147,8 @@ public class ArenaMain {
 
         return false;
     }
+
+    // ---------------- CLICK ENTER AGAIN ----------------
 
     private static boolean clickEnterAgain(WebDriver driver) {
 
@@ -163,6 +175,8 @@ public class ArenaMain {
         return false;
     }
 
+    // ---------------- ATTACK CARDS ----------------
+
     private static boolean attackCards(WebDriver driver) {
 
         boolean attacked = false;
@@ -179,6 +193,8 @@ public class ArenaMain {
 
         return attacked;
     }
+
+    // ---------------- CLICK SINGLE ATTACK ----------------
 
     private static boolean clickAttack(WebDriver driver, String attackType) {
 
@@ -214,6 +230,8 @@ public class ArenaMain {
         return false;
     }
 
+    // ---------------- CLICK ----------------
+
     private static void click(WebDriver driver, WebElement el) {
 
         try {
@@ -227,12 +245,16 @@ public class ArenaMain {
         }
     }
 
+    // ---------------- RANDOM SLEEP ----------------
+
     private static void sleepRandom(int min, int max) {
 
         int time = random.nextInt(max - min + 1) + min;
 
         sleep(time);
     }
+
+    // ---------------- SLEEP ----------------
 
     private static void sleep(int ms) {
 
