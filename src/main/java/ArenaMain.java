@@ -6,7 +6,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import java.util.List;
 import java.util.Random;
 
-public class ArenaMain {
+public class ArenaFarm {
 
     static Random random = new Random();
 
@@ -50,7 +50,9 @@ public class ArenaMain {
                     boolean attacked = attackCards(driver);
 
                     if (!attacked) {
+
                         System.out.println("No attacks left.");
+
                         break;
                     }
 
@@ -65,8 +67,11 @@ public class ArenaMain {
             System.out.println("All arena runs completed ✔");
 
         } catch (Exception e) {
+
             e.printStackTrace();
+
         } finally {
+
             driver.quit();
         }
     }
@@ -85,8 +90,11 @@ public class ArenaMain {
         sleep(4000);
 
         try {
+
             driver.findElement(By.cssSelector("a.urfin")).click();
-        } catch (Exception ignored) {}
+
+        } catch (Exception ignored) {
+        }
 
         sleep(3000);
     }
@@ -104,6 +112,7 @@ public class ArenaMain {
         );
 
         if (!arenaBtn.isEmpty()) {
+
             click(driver, arenaBtn.get(0));
         }
 
@@ -130,7 +139,7 @@ public class ArenaMain {
     private static boolean attackCards(WebDriver driver) {
 
         List<WebElement> cards = driver.findElements(
-                By.cssSelector("a.card")
+                By.xpath("//a[@class='card']")
         );
 
         boolean attacked = false;
@@ -141,7 +150,9 @@ public class ArenaMain {
 
                 String href = card.getAttribute("href");
 
-                if (href == null) continue;
+                if (href == null) {
+                    continue;
+                }
 
                 if (
                         href.contains("attack0") ||
@@ -153,12 +164,13 @@ public class ArenaMain {
 
                     attacked = true;
 
-                    System.out.println("Attack clicked: " + href);
+                    System.out.println("Clicked attack: " + href);
 
                     sleepRandom(700, 1500);
                 }
 
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         return attacked;
@@ -196,6 +208,7 @@ public class ArenaMain {
 
             Thread.sleep(ms);
 
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 }
