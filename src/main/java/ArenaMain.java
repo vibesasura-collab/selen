@@ -37,59 +37,61 @@ public class ArenaMain {
 
             sleepRandom(2000, 4000);
 
-            // enter first arena
+            // enter arena
             clickEnter(driver);
 
             System.out.println("Entered Arena ✔");
 
             // waiting room
-            sleepRandom(25000, 30000);
+            sleepRandom(20000, 25000);
 
             driver.navigate().refresh();
 
-            // wait cards load
-            sleepRandom(9000, 12000);
+            sleepRandom(4000, 7000);
 
             while (true) {
 
                 boolean attacked = attackCards(driver);
 
-                // attacks worked
+                // attacked successfully
                 if (attacked) {
-
-                    sleepRandom(9000, 12000);
 
                     driver.navigate().refresh();
 
-                    sleepRandom(8000, 11000);
+                    sleepRandom(3000, 5000);
 
                     continue;
                 }
 
-                // check enter again
+                // try enter again
                 boolean enteredAgain = clickEnterAgain(driver);
+
+                // if no enter again try normal enter
+                if (!enteredAgain) {
+                    enteredAgain = clickEnter(driver);
+                }
 
                 if (enteredAgain) {
 
                     System.out.println("Started next arena ✔");
 
-                    sleepRandom(25000, 30000);
+                    sleepRandom(20000, 25000);
 
                     driver.navigate().refresh();
 
-                    sleepRandom(9000, 12000);
+                    sleepRandom(4000, 7000);
 
                     continue;
                 }
 
-                // probably dead waiting for battle end
+                // nothing found
                 System.out.println("Waiting for battle to finish...");
 
-                sleepRandom(9000, 12000);
+                sleepRandom(3000, 5000);
 
                 driver.navigate().refresh();
 
-                sleepRandom(5000, 8000);
+                sleepRandom(2000, 4000);
             }
 
         } catch (Exception e) {
@@ -139,6 +141,8 @@ public class ArenaMain {
 
                 click(driver, enterBtn.get(0));
 
+                System.out.println("Clicked Enter");
+
                 return true;
             }
 
@@ -164,7 +168,7 @@ public class ArenaMain {
 
                 System.out.println("Clicked Enter again");
 
-                sleepRandom(3000, 5000);
+                sleepRandom(2000, 4000);
 
                 return true;
             }
@@ -175,28 +179,43 @@ public class ArenaMain {
         return false;
     }
 
-    // ---------------- ATTACK CARDS ----------------
+    // ---------------- ATTACK ALL CARDS ----------------
 
     private static boolean attackCards(WebDriver driver) {
 
         boolean attacked = false;
 
-        attacked |= clickAttack(driver, "attack0");
+        while (true) {
 
-        sleepRandom(300, 700);
+            boolean found = false;
 
-        attacked |= clickAttack(driver, "attack1");
+            found |= clickAll(driver, "attack0");
 
-        sleepRandom(300, 700);
+            sleepRandom(200, 500);
 
-        attacked |= clickAttack(driver, "attack2");
+            found |= clickAll(driver, "attack1");
+
+            sleepRandom(200, 500);
+
+            found |= clickAll(driver, "attack2");
+
+            if (!found) {
+                break;
+            }
+
+            attacked = true;
+
+            sleepRandom(500, 1000);
+        }
 
         return attacked;
     }
 
-    // ---------------- CLICK SINGLE ATTACK ----------------
+    // ---------------- CLICK ALL ----------------
 
-    private static boolean clickAttack(WebDriver driver, String attackType) {
+    private static boolean clickAll(WebDriver driver, String attackType) {
+
+        boolean clicked = false;
 
         try {
 
@@ -218,16 +237,16 @@ public class ArenaMain {
 
                     System.out.println("Clicked " + attackType);
 
-                    sleepRandom(700, 1200);
+                    clicked = true;
 
-                    return true;
+                    sleepRandom(300, 700);
                 }
             }
 
         } catch (Exception ignored) {
         }
 
-        return false;
+        return clicked;
     }
 
     // ---------------- CLICK ----------------
