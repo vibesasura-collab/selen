@@ -6,7 +6,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import java.util.List;
 import java.util.Random;
 
-public class ArenaFarm {
+public class ArenaMain {
 
     static Random random = new Random();
 
