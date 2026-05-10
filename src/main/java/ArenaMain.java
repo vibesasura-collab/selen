@@ -29,6 +29,9 @@ public class ArenaMain {
 
         WebDriver driver = new ChromeDriver(options);
 
+        int arenaCount = 0;
+        int maxArena = 15;
+
         try {
 
             login(driver, user, pass);
@@ -37,10 +40,16 @@ public class ArenaMain {
 
             sleepRandom(2000, 4000);
 
-            // enter arena
-            clickEnter(driver);
+            // enter first arena
+            boolean firstEnter = clickEnter(driver);
 
-            System.out.println("Entered Arena ✔");
+            if (firstEnter) {
+
+                arenaCount++;
+
+                System.out.println("Entered Arena ✔");
+                System.out.println("Arena Count: " + arenaCount + "/" + maxArena);
+            }
 
             // waiting room
             sleepRandom(20000, 25000);
@@ -49,7 +58,7 @@ public class ArenaMain {
 
             sleepRandom(4000, 7000);
 
-            while (true) {
+            while (arenaCount < maxArena) {
 
                 boolean attacked = attackCards(driver);
 
@@ -73,7 +82,10 @@ public class ArenaMain {
 
                 if (enteredAgain) {
 
+                    arenaCount++;
+
                     System.out.println("Started next arena ✔");
+                    System.out.println("Arena Count: " + arenaCount + "/" + maxArena);
 
                     sleepRandom(20000, 25000);
 
@@ -93,6 +105,8 @@ public class ArenaMain {
 
                 sleepRandom(2000, 4000);
             }
+
+            System.out.println("Finished all arenas ✔");
 
         } catch (Exception e) {
 
