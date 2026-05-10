@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      max-parallel: 10
+      max-parallel: 11
 
       matrix:
         include:
@@ -43,9 +43,25 @@ jobs:
             game_id_secret: GAME_ID_6
             game_password_secret: GAME_PASSWORD_6
 
+          - id: 10
+            game_id_secret: GAME_ID_10
+            game_password_secret: GAME_PASSWORD_10
+
           - id: 11
             game_id_secret: GAME_ID_11
             game_password_secret: GAME_PASSWORD_11
+
+          - id: 20
+            game_id_secret: GAME_ID_20
+            game_password_secret: GAME_PASSWORD_20
+
+          - id: 24
+            game_id_secret: GAME_ID_24
+            game_password_secret: GAME_PASSWORD_24
+
+          - id: 25
+            game_id_secret: GAME_ID_25
+            game_password_secret: GAME_PASSWORD_25
 
           - id: 28
             game_id_secret: GAME_ID_28
@@ -59,9 +75,17 @@ jobs:
             game_id_secret: GAME_ID_30
             game_password_secret: GAME_PASSWORD_30
 
+          - id: 33
+            game_id_secret: GAME_ID_33
+            game_password_secret: GAME_PASSWORD_33
+
           - id: 34
             game_id_secret: GAME_ID_34
             game_password_secret: GAME_PASSWORD_34
+
+          - id: 35
+            game_id_secret: GAME_ID_35
+            game_password_secret: GAME_PASSWORD_35
 
     steps:
       - name: Checkout
