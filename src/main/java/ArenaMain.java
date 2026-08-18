@@ -114,7 +114,7 @@ public class ArenaMain {
 
     private static boolean checkDailyQuestsDone(WebDriver driver) {
         try {
-            // Click Daily Quests link or navigate directly
+            // Navigate directly or click Daily Quests link
             List<WebElement> dailyLinks = driver.findElements(By.xpath("//a[contains(@href, '/daily/')]"));
             if (!dailyLinks.isEmpty()) {
                 click(driver, dailyLinks.get(0));
@@ -124,25 +124,16 @@ public class ArenaMain {
 
             sleepRandom(3000, 5000);
 
-            // Find all survival/arena buttons on daily quest page
-            List<WebElement> arenaButtons = driver.findElements(By.xpath("//a[contains(@href, '/survival/')]"));
+            // Locate reward buttons matching the specific daily reward URIs
+            List<WebElement> rewardButtons = driver.findElements(By.xpath(
+                "//a[contains(@href, '/daily/reward/arenas/') or contains(@href, '/daily/reward/win_arenas/')]"
+            ));
 
-            int rewardCount = 0;
-
-            for (WebElement btn : arenaButtons) {
-                String btnText = btn.getText();
-                WebElement parent = btn.findElement(By.xpath("./.."));
-                String parentText = parent.getText();
-
-                // Check if button or its parent container displays "Receive Reward"
-                if (btnText.contains("Receive Reward") || parentText.contains("Receive Reward")) {
-                    rewardCount++;
-                }
-            }
+            int rewardCount = rewardButtons.size();
 
             System.out.println("Arena 'Receive Reward' buttons found: " + rewardCount + "/2");
 
-            // Stop loop if both Arena quest buttons show "Receive Reward"
+            // Stop loop when both reward links are visible/present
             return rewardCount >= 2;
 
         } catch (Exception e) {
