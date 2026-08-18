@@ -1,15 +1,6 @@
 name: Arena Bot
 
 on:
-  schedule:
-    # -------------------------------------------------------------
-    # TARGET GAME TIME: GMT+1 (Every day at 14:20)
-    # GITHUB CRON REQUIREMENT: Must use standard UTC/GMT time.
-    # CONVERSION: Subtract 1 hour from Game Time to get UTC/GMT.
-    # 14:20 Game Time -> 13:20 UTC/GMT
-    # -------------------------------------------------------------
-    - cron: '20 13 * * *'
-
   workflow_dispatch:
     inputs:
       run_mode:
@@ -108,6 +99,10 @@ jobs:
             game_id_secret: GAME_ID_31
             game_password_secret: GAME_PASSWORD_31
 
+          - id: 21
+            game_id_secret: GAME_ID_50
+            game_password_secret: GAME_PASSWORD_50
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -116,7 +111,7 @@ jobs:
         run: |
           echo "Event: ${{ github.event_name }}"
           echo "Mode: ${{ github.event.inputs.run_mode }}"
-          if [ "${{ github.event_name }}" != "schedule" ] && [ "${{ github.event.inputs.run_mode }}" != "RUN" ]; then
+          if [ "${{ github.event.inputs.run_mode }}" != "RUN" ]; then
             echo "Not authorized run. Exiting."
             exit 1
           fi
