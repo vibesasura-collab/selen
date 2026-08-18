@@ -22,7 +22,6 @@ public class ArenaMain {
         WebDriverManager.chromedriver().setup();
 
         ChromeOptions options = new ChromeOptions();
-
         options.addArguments("--headless=new");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
@@ -30,91 +29,125 @@ public class ArenaMain {
         WebDriver driver = new ChromeDriver(options);
 
         int arenaCount = 0;
-        int maxArena = 15;
 
         try {
 
             login(driver, user, pass);
 
             driver.get("https://elem.cards/survival/");
-
             sleepRandom(2000, 4000);
 
-            // enter first arena
+            // Enter first arena
             boolean firstEnter = clickEnter(driver);
 
             if (firstEnter) {
-
                 arenaCount++;
-
                 System.out.println("Entered Arena ✔");
-                System.out.println("Arena Count: " + arenaCount + "/" + maxArena);
+                System.out.println("Arena Count: " + arenaCount);
             }
 
-            // waiting room
+            // Waiting room
             sleepRandom(20000, 25000);
-
             driver.navigate().refresh();
-
             sleepRandom(4000, 7000);
 
-            while (arenaCount < maxArena) {
+            // Infinite loop until both daily quest rewards show "Receive Reward"
+            while (true) {
 
                 boolean attacked = attackCards(driver);
 
-                // attacked successfully
+                // If attacked successfully, refresh and keep attacking
                 if (attacked) {
-
                     driver.navigate().refresh();
-
                     sleepRandom(3000, 5000);
-
                     continue;
                 }
 
-                // try enter again
+                // When no attacks left, check Daily Quests status
+                System.out.println("Match completed or no attacks left. Checking Daily Quests...");
+                
+                if (checkDailyQuestsDone(driver)) {
+                    System.out.println("Both Arena Daily Quest rewards are ready ('Receive Reward')! Stopping process. ✔");
+                    break;
+                }
+
+                // Return to survival page if not stopped
+                driver.get("https://elem.cards/survival/");
+                sleepRandom(2000, 4000);
+
+                // Try enter again
                 boolean enteredAgain = clickEnterAgain(driver);
 
-                // if no enter again try normal enter
                 if (!enteredAgain) {
                     enteredAgain = clickEnter(driver);
                 }
 
                 if (enteredAgain) {
-
                     arenaCount++;
-
                     System.out.println("Started next arena ✔");
-                    System.out.println("Arena Count: " + arenaCount + "/" + maxArena);
+                    System.out.println("Arena Count: " + arenaCount);
 
                     sleepRandom(20000, 25000);
-
                     driver.navigate().refresh();
-
                     sleepRandom(4000, 7000);
 
                     continue;
                 }
 
-                // nothing found
+                // Nothing found, battle still in progress
                 System.out.println("Waiting for battle to finish...");
-
                 sleepRandom(3000, 5000);
-
                 driver.navigate().refresh();
-
                 sleepRandom(2000, 4000);
             }
 
-            System.out.println("Finished all arenas ✔");
+            System.out.println("Process finished successfully ✔");
 
         } catch (Exception e) {
-
             e.printStackTrace();
-
         } finally {
-
             driver.quit();
+        }
+    }
+
+    // ---------------- CHECK DAILY QUESTS ----------------
+
+    private static boolean checkDailyQuestsDone(WebDriver driver) {
+        try {
+            // Click Daily Quests link or navigate directly
+            List<WebElement> dailyLinks = driver.findElements(By.xpath("//a[contains(@href, '/daily/')]"));
+            if (!dailyLinks.isEmpty()) {
+                click(driver, dailyLinks.get(0));
+            } else {
+                driver.get("https://elem.cards/daily/");
+            }
+
+            sleepRandom(3000, 5000);
+
+            // Find all survival/arena buttons on daily quest page
+            List<WebElement> arenaButtons = driver.findElements(By.xpath("//a[contains(@href, '/survival/')]"));
+
+            int rewardCount = 0;
+
+            for (WebElement btn : arenaButtons) {
+                String btnText = btn.getText();
+                WebElement parent = btn.findElement(By.xpath("./.."));
+                String parentText = parent.getText();
+
+                // Check if button or its parent container displays "Receive Reward"
+                if (btnText.contains("Receive Reward") || parentText.contains("Receive Reward")) {
+                    rewardCount++;
+                }
+            }
+
+            System.out.println("Arena 'Receive Reward' buttons found: " + rewardCount + "/2");
+
+            // Stop loop if both Arena quest buttons show "Receive Reward"
+            return rewardCount >= 2;
+
+        } catch (Exception e) {
+            System.out.println("Error checking daily quests: " + e.getMessage());
+            return false;
         }
     }
 
@@ -132,9 +165,7 @@ public class ArenaMain {
         sleep(4000);
 
         try {
-
             driver.findElement(By.cssSelector("a.urfin")).click();
-
         } catch (Exception ignored) {
         }
 
@@ -146,17 +177,13 @@ public class ArenaMain {
     private static boolean clickEnter(WebDriver driver) {
 
         try {
-
             List<WebElement> enterBtn = driver.findElements(
                     By.xpath("//span[text()='Enter']/ancestor::a")
             );
 
             if (!enterBtn.isEmpty()) {
-
                 click(driver, enterBtn.get(0));
-
                 System.out.println("Clicked Enter");
-
                 return true;
             }
 
@@ -171,19 +198,14 @@ public class ArenaMain {
     private static boolean clickEnterAgain(WebDriver driver) {
 
         try {
-
             List<WebElement> btns = driver.findElements(
                     By.xpath("//span[contains(text(),'Enter again')]/ancestor::a")
             );
 
             if (!btns.isEmpty()) {
-
                 click(driver, btns.get(0));
-
                 System.out.println("Clicked Enter again");
-
                 sleepRandom(2000, 4000);
-
                 return true;
             }
 
@@ -204,21 +226,19 @@ public class ArenaMain {
             boolean found = false;
 
             found |= clickAll(driver, "attack0");
-
             sleepRandom(200, 500);
 
             found |= clickAll(driver, "attack1");
-
             sleepRandom(200, 500);
 
             found |= clickAll(driver, "attack2");
+            sleepRandom(200, 500);
 
             if (!found) {
                 break;
             }
 
             attacked = true;
-
             sleepRandom(500, 1000);
         }
 
@@ -248,11 +268,9 @@ public class ArenaMain {
                 if (href.contains(attackType)) {
 
                     click(driver, card);
-
                     System.out.println("Clicked " + attackType);
 
                     clicked = true;
-
                     sleepRandom(300, 700);
                 }
             }
@@ -268,11 +286,8 @@ public class ArenaMain {
     private static void click(WebDriver driver, WebElement el) {
 
         try {
-
             el.click();
-
         } catch (Exception e) {
-
             ((JavascriptExecutor) driver)
                     .executeScript("arguments[0].click();", el);
         }
@@ -281,20 +296,15 @@ public class ArenaMain {
     // ---------------- RANDOM SLEEP ----------------
 
     private static void sleepRandom(int min, int max) {
-
         int time = random.nextInt(max - min + 1) + min;
-
         sleep(time);
     }
 
     // ---------------- SLEEP ----------------
 
     private static void sleep(int ms) {
-
         try {
-
             Thread.sleep(ms);
-
         } catch (Exception ignored) {
         }
     }
